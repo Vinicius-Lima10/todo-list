@@ -32,6 +32,18 @@ public class Tarefa {
         return nome;
     }
 
+    @Override
+    public String toString() {
+        return "Tarefa{" +
+                "nome='" + nome + '\'' +
+                ", descricao='" + descricao + '\'' +
+                ", nivelPrioridade=" + nivelPrioridade +
+                ", categoria='" + categoria + '\'' +
+                ", status=" + status +
+                ", dataDeTermino=" + dataDeTermino +
+                '}';
+    }
+
     public void setNome(String nome) {
         this.nome = nome;
     }
