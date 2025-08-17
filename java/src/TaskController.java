@@ -3,19 +3,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskController {
-    ArrayList<Tarefa> listaTarefa = new ArrayList<>();
-    public TaskController() {
+    private ArrayList<Tarefa> listaTarefa = new ArrayList<>();
 
-    }
-    public int listaSort(Tarefa t1, Tarefa t2) {
-            if (t1.getNivelPrioridade() > t2.getNivelPrioridade()) {
-                return -1; // t1 vem antes de t2
-            } else if (t1.getNivelPrioridade() < t2.getNivelPrioridade()) {
-                return 1;  // t2 vem antes de t1
-            } else {
-                return 0;  // iguais
-            }
-    }
     public void criarTarefa(String nome, String descricao,
                             int nivelPrioridade, String categoria,
                             Status status, LocalDate dataDeTermino) {
@@ -28,6 +17,10 @@ public class TaskController {
         listaTarefa.add(new  Tarefa(nome, descricao, nivelPrioridade,
                 categoria, status, dataDeTermino));
         listaTarefa.sort((t1, t2) -> listaSort(t1, t2));
+    }
+
+    public List<Tarefa> listarTodasTarefas() {
+        return this.listaTarefa;
     }
 
     public Tarefa listarTarefa(String nome) {
@@ -76,22 +69,31 @@ public class TaskController {
 
         listaTarefa.sort((t1, t2) -> listaSort(t1, t2));
     }
-    public List<Tarefa> listarPorCategoria(String categoria) {
+    public List<Tarefa> filtrarPorCategoria(String categoria) {
 
         return listaTarefa.stream()
                 .filter(t -> t.getCategoria().equalsIgnoreCase(categoria))
                 .toList();
     }
 
-    public List<Tarefa> listarPorStatus(Status status) {
+    public List<Tarefa> filtrarPorStatus(Status status) {
         return listaTarefa.stream()
                 .filter(t -> t.getStatus() == status)
                 .toList();
     }
 
-    public List<Tarefa> listarPorPrioridade(int prioridade) {
+    public List<Tarefa> filtrarPorPrioridade(int prioridade) {
         return listaTarefa.stream()
                 .filter(t -> t.getNivelPrioridade() == prioridade)
                 .toList();
+    }
+    public int listaSort(Tarefa t1, Tarefa t2) {
+        if (t1.getNivelPrioridade() > t2.getNivelPrioridade()) {
+            return -1; // t1 vem antes de t2
+        } else if (t1.getNivelPrioridade() < t2.getNivelPrioridade()) {
+            return 1;  // t2 vem antes de t1
+        } else {
+            return 0;  // iguais
+        }
     }
 }
