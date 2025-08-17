@@ -83,7 +83,7 @@ public class TaskController {
                 .toList();
     }
 
-    public List<Tarefa> listarPorStatus(Tarefa.Status status) {
+    public List<Tarefa> listarPorStatus(Status status) {
         return listaTarefa.stream()
                 .filter(t -> t.getStatus() == status)
                 .toList();
