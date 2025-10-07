@@ -53,7 +53,7 @@ public class TaskController {
         }
     }
 
-    //EDita taraefa
+    //Editar taraefa
     public void editarTarefa(String nome, String novoNome,
                              String novaDescricao, Integer novaPrioridade,
                              String novaCategoria, Status novoStatus,
@@ -111,4 +111,5 @@ public class TaskController {
             return 0;  // iguais
         }
     }
+
 }

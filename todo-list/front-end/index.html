@@ -16,6 +16,7 @@
         <a href="criarTarefa.html"> <button class="btn botaoperso"> Criar Tarefa </button> </a>
     </div>
 </nav>
+
     <div class="container box">
         <h1 class="titulo-body"> Tarefas Adicionadas </h1>
         <select onchange="filtrarStatus(this.value)">
@@ -24,6 +25,17 @@
             <option value="DOING">DOING</option>
             <option value="DONE">DONE</option>
         </select>
+
+        <div class="d-flex my-3">
+            <select id="novoStatus" class="form-select w-auto me-2">
+                <option value="">Alterar status </option>
+                <option value="TODO">TODO</option>
+                <option value="DOING">DOING</option>
+                <option value="DONE">DONE</option>
+            </select>
+            <button class="btn btn-success" onclick="alterarStatusSelecionados()">Executar</button>
+        </div>
+
         <div id="tarefas"></div>
         <script>
             listarTarefas()

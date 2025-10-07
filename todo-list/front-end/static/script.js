@@ -67,35 +67,34 @@ function editarTarefa() {
     }
 
 }
+function listarTarefas(tarefas = null) {
+    document.getElementById("tarefas").innerHTML = "";
+    let todas = tarefas || JSON.parse(localStorage.getItem("tarefas")) || [];
 
-function listarTarefas(tarefas=null) {
-    let indice = 0;
-    if (!tarefas) {
-        tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
-    }
-
-    for (let i = 0; i < tarefas.length; i++) {
-        let tarefa = tarefas[i];
+    todas.forEach((tarefa, i) => {
         let tarefasHtml = `
-                    <div class="tarefa row">
-                        <h3 class="col-3">${tarefa.nome}</h3>
-                        <p class="col-6">${tarefa.descricao}</p>
-                        <div class="col-3">
-                            <button id="botaoEditar" onclick="editar(${indice})" class="btn btn-primary col-5">Editar</button>
-                            <button id="botaoDeletar" onclick="deletarTarefa(${indice})" class="btn btn-danger col-5">Remover</button>
-                        </div>
-                        <div class="row">
-                            <div class="col-3">Nível de prioridade: ${tarefa.nivelPrioridade}</div>
-                            <div class="col-3">Categoria: ${tarefa.categoria}</div>
-                            <div class="col-3">Status: ${tarefa.status}</div>
-                            <div class="col-3">Data de término: ${tarefa.dataDeTermino}</div>
-                        </div>
-                    </div>
-                `;
+            <div class="tarefa row border p-2 mb-2 align-items-center">
+                <div class="col-1 text-center">
+                    <input type="checkbox" class="selecionar-tarefa" value="${i}">
+                </div>
+                <div class="col-3"><strong>${tarefa.nome}</strong></div>
+                <div class="col-4">${tarefa.descricao}</div>
+                <div class="col-4 text-end">
+                    <button onclick="editar(${i})" class="btn btn-primary btn-sm">Editar</button>
+                    <button onclick="deletarTarefa(${i})" class="btn btn-danger btn-sm">Remover</button>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-3">Prioridade: ${tarefa.nivelPrioridade}</div>
+                    <div class="col-3">Categoria: ${tarefa.categoria}</div>
+                    <div class="col-3">Status: ${tarefa.status}</div>
+                    <div class="col-3">Término: ${tarefa.dataDeTermino}</div>
+                </div>
+            </div>
+        `;
         document.getElementById("tarefas").innerHTML += tarefasHtml;
-        indice += 1;
-    }
+    });
 }
+
 
 function editar(indice) {
     localStorage.setItem("tarefaEditando", indice);
@@ -114,7 +113,6 @@ function deletarTarefa(indice) {
 }
 
 function filtrarStatus(status) {
-    console.log(status)
     document.getElementById("tarefas").innerHTML = ""
     tarefas = JSON.parse(localStorage.getItem("tarefas") || [])
     if(status === "0") {
@@ -128,4 +126,29 @@ function filtrarStatus(status) {
         }
     }
     listarTarefas(tarefasFiltradas)
+}
+
+function alterarStatusSelecionados() {
+    const novoStatus = document.getElementById("novoStatus").value;
+    if (!novoStatus) {
+        alert("Por favor, selecione um status.");
+        return;
+    }
+
+    const checkboxes = document.querySelectorAll(".selecionar-tarefa:checked");
+    if (checkboxes.length === 0) {
+        alert("Nenhuma tarefa selecionada.");
+        return;
+    }
+
+    let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
+
+    checkboxes.forEach(cb => {
+        const indice = parseInt(cb.value);
+        tarefas[indice].status = novoStatus;
+    });
+
+    localStorage.setItem("tarefas", JSON.stringify(tarefas));
+    listarTarefas(); // atualiza a tela
+    document.getElementById("novoStatus").value = "";
 }
