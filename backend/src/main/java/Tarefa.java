@@ -7,18 +7,26 @@ public class Tarefa {
     private String categoria;
     private Status status;
     private LocalDate dataDeTermino;
-
+    private boolean alarme;
     public Tarefa(String nome, String descricao,
                   int nivelPrioridade, String categoria,
-                  Status status, LocalDate dataDeTermino) {
+                  Status status, LocalDate dataDeTermino,
+                  boolean alarme) {
         this.nome = nome;
         this.descricao = descricao;
         setNivelPrioridade(nivelPrioridade);
         this.categoria = categoria;
         this.status = status;
         this.dataDeTermino = dataDeTermino;
+        this.alarme = alarme;
+    }
+    public boolean isAlarme() {
+        return alarme;
     }
 
+    public void setAlarme(boolean alarme) {
+        this.alarme = alarme;
+    }
     public String getDescricao() {
 
         return descricao;

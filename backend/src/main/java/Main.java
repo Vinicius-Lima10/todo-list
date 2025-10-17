@@ -7,6 +7,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int opcao;
         do {
+            taskController.verificarAlarmes();
             System.out.println("\n--- TODO LIST ---");
             System.out.println("1 - Adicionar Tarefa");
             System.out.println("2 - Listar Tarefas");
@@ -24,21 +25,23 @@ public class Main {
 
             switch (opcao) {
                 case 1 -> {
-                    System.out.print("Nome: ");
+                    System.out.println("Nome: ");
                     String nome = scanner.nextLine();
-                    System.out.print("Descrição: ");
+                    System.out.println("Descrição: ");
                     String desc = scanner.nextLine();
-                    System.out.print("Prioridade (1-5): ");
+                    System.out.println("Prioridade (1-5): ");
                     int prioridade = scanner.nextInt();
                     scanner.nextLine();
-                    System.out.print("Categoria: ");
+                    System.out.println("Categoria: ");
                     String categoria = scanner.nextLine();
-                    System.out.print("Status (TODO, DOING, DONE): ");
+                    System.out.println("Status (TODO, DOING, DONE): ");
                     Status status = Status.valueOf(scanner.nextLine().toUpperCase());
-                    System.out.print("Data de término (YYYY-MM-DD): ");
+                    System.out.println("Data de término (YYYY-MM-DD): ");
                     LocalDate data = LocalDate.parse(scanner.nextLine());
+                    System.out.println("Ativar alarme? (s/n): ");
+                    boolean alarme = scanner.nextLine().equalsIgnoreCase("s");
 
-                    taskController.criarTarefa(nome, desc, prioridade, categoria, status, data);
+                    taskController.criarTarefa(nome, desc, prioridade, categoria, status, data, alarme);
                 }
                 case 2 -> {
                     if (taskController.listarTodasTarefas().isEmpty()) {
@@ -72,35 +75,42 @@ public class Main {
                             .forEach(System.out::println);
                 }
                 case 7 -> {
-                    System.out.print("Nome da tarefa a editar: ");
+                    System.out.println("Nome da tarefa a editar: ");
                     String nomeAntigo = scanner.nextLine();
 
-                    System.out.print("Novo nome (ou deixe vazio p/ manter): ");
+                    System.out.println("Novo nome (ou deixe vazio p/ manter): ");
                     String novoNome = scanner.nextLine();
                     if (novoNome.isBlank()) novoNome = null;
 
-                    System.out.print("Nova descrição (ou deixe vazio): ");
+                    System.out.println("Nova descrição (ou deixe vazio): ");
                     String novaDesc = scanner.nextLine();
                     if (novaDesc.isBlank()) novaDesc = null;
 
-                    System.out.print("Nova prioridade (1-5 ou 0 p/ manter): ");
+                    System.out.println("Nova prioridade (1-5 ou 0 p/ manter): ");
                     int novaPrioridade = scanner.nextInt();
                     scanner.nextLine();
                     Integer prioridadeObj = (novaPrioridade == 0) ? null : novaPrioridade;
 
-                    System.out.print("Nova categoria (ou deixe vazio): ");
+                    System.out.println("Nova categoria (ou deixe vazio): ");
                     String novaCategoria = scanner.nextLine();
                     if (novaCategoria.isBlank()) novaCategoria = null;
 
-                    System.out.print("Novo status (TODO, DOING, DONE ou vazio): ");
+                    System.out.println("Novo status (TODO, DOING, DONE ou vazio): ");
                     String statusStr = scanner.nextLine();
                     Status novoStatus = statusStr.isBlank() ? null : Status.valueOf(statusStr.toUpperCase());
 
-                    System.out.print("Nova data término (YYYY-MM-DD ou vazio): ");
+                    System.out.println("Nova data término (YYYY-MM-DD ou vazio): ");
                     String dataStr = scanner.nextLine();
                     LocalDate novaData = dataStr.isBlank() ? null : LocalDate.parse(dataStr);
 
-                    taskController.editarTarefa(nomeAntigo, novoNome, novaDesc, prioridadeObj, novaCategoria, novoStatus, novaData);
+                    System.out.println("Alterar alarme? (s/n ou vazio p/ manter): ");
+                    String alarmeStr = scanner.nextLine();
+                    Boolean novoAlarme = null;
+                    if (alarmeStr.equalsIgnoreCase("s")) novoAlarme = true;
+                    else if (alarmeStr.equalsIgnoreCase("n")) novoAlarme = false;
+
+                    taskController.editarTarefa(nomeAntigo, novoNome, novaDesc, prioridadeObj, novaCategoria,
+                            novoStatus, novaData, novoAlarme );
                 }
                 case 8 -> {
                     System.out.println("Digite o nome da tarefa");

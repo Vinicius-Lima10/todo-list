@@ -1,28 +1,31 @@
 import java.time.LocalDate;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 
 public class TaskController {
     private ArrayList<Tarefa> listaTarefa = new ArrayList<>();
 
+
     public void criarTarefa(String nome, String descricao,
                             int nivelPrioridade, String categoria,
-                            Status status, LocalDate dataDeTermino) {
+                            Status status, LocalDate dataDeTermino,
+                            boolean alarme) {
 
-        //Primeiro verifica se não tem outra com mesmo nome
         boolean existe = listaTarefa.stream()
                 .anyMatch(tarefa -> tarefa.getNome().equalsIgnoreCase(nome));
 
         if (existe) {
-            throw new RuntimeException("Tarefa já existente de nome: " + nome);
+            throw new RuntimeException("Tarefa já existente: " + nome);
         }
 
-        //Adiciona a tarefa se não existe
-        listaTarefa.add(new  Tarefa(nome, descricao, nivelPrioridade,
-                categoria, status, dataDeTermino));
+        listaTarefa.add(new Tarefa(nome, descricao, nivelPrioridade,
+                categoria, status, dataDeTermino, alarme));
 
-        //Ordena pela prioridade
-        listaTarefa.sort((t1, t2) -> listaSort(t1, t2));
+        listaTarefa.sort(this::listaSort);
     }
 
     public List<Tarefa> listarTodasTarefas() {
@@ -53,20 +56,17 @@ public class TaskController {
         }
     }
 
-    //Editar taraefa
     public void editarTarefa(String nome, String novoNome,
                              String novaDescricao, Integer novaPrioridade,
                              String novaCategoria, Status novoStatus,
-                             LocalDate novaData) {
+                             LocalDate novaData, Boolean novoAlarme) {
 
-        //Obter a tarefa específica que queremos editar
         Tarefa tarefa = listarTarefa(nome);
         if (tarefa == null) {
             throw new RuntimeException("Tarefa não encontrada - " + nome);
         }
 
         if (novoNome != null && !tarefa.getNome().equalsIgnoreCase(novoNome)) {
-            //Se modifica o nome, pesquisa para ver se não tem nenhum igual
             boolean existe = listaTarefa.stream()
                     .anyMatch(t -> t.getNome().equalsIgnoreCase(novoNome));
             if (existe) {
@@ -75,15 +75,16 @@ public class TaskController {
             tarefa.setNome(novoNome);
         }
 
-        //Se alterar os campos, setamos os novos valores
         if (novaDescricao != null) tarefa.setDescricao(novaDescricao);
         if (novaPrioridade != null) tarefa.setNivelPrioridade(novaPrioridade);
         if (novaCategoria != null) tarefa.setCategoria(novaCategoria);
         if (novoStatus != null) tarefa.setStatus(novoStatus);
         if (novaData != null) tarefa.setDataDeTermino(novaData);
+        if (novoAlarme != null) tarefa.setAlarme(novoAlarme);
 
-        listaTarefa.sort((t1, t2) -> listaSort(t1, t2));
+        listaTarefa.sort(this::listaSort);
     }
+
     public List<Tarefa> filtrarPorCategoria(String categoria) {
 
         return listaTarefa.stream()
@@ -111,5 +112,23 @@ public class TaskController {
             return 0;  // iguais
         }
     }
+    public void verificarAlarmes() {
+        LocalDate hoje = LocalDate.now(ZoneId.of("America/Sao_Paulo"));
+
+        for (Tarefa tarefa : listaTarefa) {
+            if (tarefa.isAlarme() && tarefa.getStatus() != Status.DONE) {
+                LocalDate data = tarefa.getDataDeTermino();
+
+                if (data.isEqual(hoje)) {
+                    System.out.println("🔔 ALARME! A tarefa \"" + tarefa.getNome() + "\" é para hoje!");
+                } else if (data.isEqual(hoje.plusDays(1))) {
+                    System.out.println("⏰ Lembrete: A tarefa \"" + tarefa.getNome() + "\" é para amanhã!");
+                } else if (data.isBefore(hoje)) {
+                    System.out.println("⚠️ A tarefa \"" + tarefa.getNome() + "\" está atrasada!");
+                }
+            }
+        }
+    }
+
 
 }
