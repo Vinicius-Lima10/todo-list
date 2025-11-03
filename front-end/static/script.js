@@ -4,6 +4,7 @@ function criarTarefa()
         event.preventDefault();
 
         const tarefa = {
+            id: crypto.randomUUID(),
             nome: document.getElementById("nome").value,
             status: document.getElementById("status").value,
             dataDeTermino: document.getElementById("dataDeTermino").value,
@@ -28,45 +29,62 @@ function criarTarefa()
 }
 
 function editarTarefa() {
-    indice = localStorage.getItem("tarefaEditando")
-    if (indice !== null) {
-        let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
-        if (!tarefas) {
-            location.href = "index.html"
-        }
-        const tarefa = tarefas[indice];
+    const idTarefa = localStorage.getItem("tarefaEditando");
+    if (!idTarefa) return;
 
-        document.getElementById("nome").value = tarefa.nome;
-        document.getElementById("status").value = tarefa.status;
-        document.getElementById("dataDeTermino").value = tarefa.dataDeTermino;
-        document.getElementById("nivelPrioridade").value = tarefa.nivelPrioridade;
-        document.getElementById("categoria").value = tarefa.categoria;
-        document.getElementById("descricao").value = tarefa.descricao;
+    let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
+    const indice = tarefas.findIndex(t => t.id === idTarefa);
 
-        document.getElementById("editarTarefa").addEventListener("submit", function (event) {
-
-            event.preventDefault();
-            tarefa.nome = document.getElementById("nome").value;
-            tarefa.status = document.getElementById("status").value;
-            tarefa.dataDeTermino = document.getElementById("dataDeTermino").value;
-            tarefa.nivelPrioridade = document.getElementById("nivelPrioridade").value;
-            tarefa.categoria = document.getElementById("categoria").value;
-            tarefa.descricao = document.getElementById("descricao").value;
-
-            tarefas[indice] = tarefa
-            localStorage.setItem("tarefas", JSON.stringify(tarefas));
-
-            document.getElementById("mensagemSucesso").style.display = "block";
-            setTimeout(() => {
-
-                document.getElementById("mensagemSucesso").style.display = "none";
-                localStorage.removeItem("tarefaEditando")
-                location.href = "index.html"
-            }, 5000);
-        });
+    if (indice === -1) {
+        alert("Essa tarefa foi removida ou alterada em outra aba.");
+        localStorage.removeItem("tarefaEditando");
+        location.href = "index.html";
+        return;
     }
 
+    const tarefa = tarefas[indice];
+
+    document.getElementById("nome").value = tarefa.nome;
+    document.getElementById("status").value = tarefa.status;
+    document.getElementById("dataDeTermino").value = tarefa.dataDeTermino;
+    document.getElementById("nivelPrioridade").value = tarefa.nivelPrioridade;
+    document.getElementById("categoria").value = tarefa.categoria;
+    document.getElementById("descricao").value = tarefa.descricao;
+
+    document.getElementById("editarTarefa").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        let tarefasAtualizadas = JSON.parse(localStorage.getItem("tarefas")) || [];
+        const i = tarefasAtualizadas.findIndex(t => t.id === idTarefa);
+
+        if (i === -1) {
+            alert("Essa tarefa foi removida ou alterada em outra aba.");
+            localStorage.removeItem("tarefaEditando");
+            location.href = "index.html";
+            return;
+        }
+
+        tarefasAtualizadas[i] = {
+            ...tarefasAtualizadas[i],
+            nome: document.getElementById("nome").value,
+            status: document.getElementById("status").value,
+            dataDeTermino: document.getElementById("dataDeTermino").value,
+            nivelPrioridade: document.getElementById("nivelPrioridade").value,
+            categoria: document.getElementById("categoria").value,
+            descricao: document.getElementById("descricao").value
+        };
+
+        localStorage.setItem("tarefas", JSON.stringify(tarefasAtualizadas));
+
+        document.getElementById("mensagemSucesso").style.display = "block";
+        setTimeout(() => {
+            document.getElementById("mensagemSucesso").style.display = "none";
+            localStorage.removeItem("tarefaEditando");
+            location.href = "index.html";
+        }, 3000);
+    });
 }
+
 function listarTarefas(tarefas = null) {
     document.getElementById("tarefas").innerHTML = "";
     let todas = tarefas || JSON.parse(localStorage.getItem("tarefas")) || [];
@@ -97,9 +115,12 @@ function listarTarefas(tarefas = null) {
 
 
 function editar(indice) {
-    localStorage.setItem("tarefaEditando", indice);
+    let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
+    const tarefa = tarefas[indice];
+    localStorage.setItem("tarefaEditando", tarefa.id);
     location.href = "editarTarefa.html";
 }
+
 
 function deletarTarefa(indice) {
 
