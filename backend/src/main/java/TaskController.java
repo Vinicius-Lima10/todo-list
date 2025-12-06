@@ -33,7 +33,6 @@ public class TaskController {
     }
 
 
-    //Busca por uma tarefa específica
     public Tarefa listarTarefa(String nome) {
         for(Tarefa tarefa: listaTarefa) {
             if(tarefa.getNome().equalsIgnoreCase(nome)) {
@@ -105,11 +104,11 @@ public class TaskController {
     }
     public int listaSort(Tarefa t1, Tarefa t2) {
         if (t1.getNivelPrioridade() > t2.getNivelPrioridade()) {
-            return -1; // t1 vem antes de t2
+            return -1;
         } else if (t1.getNivelPrioridade() < t2.getNivelPrioridade()) {
-            return 1;  // t2 vem antes de t1
+            return 1;
         } else {
-            return 0;  // iguais
+            return 0;
         }
     }
     public void verificarAlarmes() {
@@ -120,11 +119,11 @@ public class TaskController {
                 LocalDate data = tarefa.getDataDeTermino();
 
                 if (data.isEqual(hoje)) {
-                    System.out.println("🔔 ALARME! A tarefa \"" + tarefa.getNome() + "\" é para hoje!");
+                    System.out.println("ALARME! A tarefa \"" + tarefa.getNome() + "\" é para hoje!");
                 } else if (data.isEqual(hoje.plusDays(1))) {
-                    System.out.println("⏰ Lembrete: A tarefa \"" + tarefa.getNome() + "\" é para amanhã!");
+                    System.out.println("Lembrete: A tarefa \"" + tarefa.getNome() + "\" é para amanhã!");
                 } else if (data.isBefore(hoje)) {
-                    System.out.println("⚠️ A tarefa \"" + tarefa.getNome() + "\" está atrasada!");
+                    System.out.println("A tarefa \"" + tarefa.getNome() + "\" está atrasada!");
                 }
             }
         }
